@@ -31,8 +31,8 @@ int input(char** buffer, size_t* size) {
 
     // バッファの確保
     if ( *buffer == NULL ) {
-        *size = 1;
-        *buffer = malloc(*size);
+        *size = 30;
+        *buffer = (char*)malloc(*size);
         if (*buffer == NULL) return -1;
     }
 
@@ -41,16 +41,18 @@ int input(char** buffer, size_t* size) {
 
     // ループで位置文字ずつ全体の式を取得 (Ctrl + D = EOF)
     while ( (token = getchar()) != '\n' && token != EOF ) {
-        *size += 1;
-        char* tmp = realloc(*buffer, *size);
-        if (tmp == NULL) return -1;
-        *buffer = tmp;
+        if ( len + 1 >= *size ) {
+            *size += 30;
+            char* tmp = (char*)realloc(*buffer, *size);
+            if (tmp == NULL) return -1;
+            *buffer = tmp;
+        }
         // 入力を取得
         (*buffer)[len] = token;
         len++;
     }
 
-    // 入力無しでEOFなら終了
+    // EOF(Ctrl + D)なら終了
     if ( token == EOF ) return -1;
 
     // 終端文字を追加
